@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteClick {
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         FragmentManager fragmentManager = getSupportFragmentManager();
-
+        fragmentManager.popBackStack();
         Notes note = savedInstanceState.getParcelable(KEY);
 
         if (note != null) {
