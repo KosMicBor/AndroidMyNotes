@@ -13,7 +13,6 @@ import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteClick, OnCr
                     drawer.closeDrawer(GravityCompat.START);
                     return true;
                 }
+
                 return false;
             }
         });
@@ -85,30 +85,44 @@ public class MainActivity extends AppCompatActivity implements OnNoteClick, OnCr
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (navigateFragment(id)) {
+
+        if (MainActivity.this.navigateFragment(id)) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     @SuppressLint("NonConstantResourceId")
     private boolean navigateFragment(int id) {
+
         switch (id) {
             case R.id.main_menu_settings:
-                Toast.makeText(MainActivity.this,
-                        "Нажата кнопка Настройки", Toast.LENGTH_SHORT).show();
+                openFragmentFromDrawer(new SettingsFragment());
                 return true;
             case R.id.main_menu_main:
-                Toast.makeText(MainActivity.this,
-                        "Нажата кнопка Домой", Toast.LENGTH_SHORT).show();
+                openFragmentFromDrawer(new MainListFragment());
                 return true;
             case R.id.main_menu_about:
-                Toast.makeText(MainActivity.this,
-                        "Нажата кнопка О приложении", Toast.LENGTH_SHORT).show();
+                openFragmentFromDrawer(new AboutFragment());
                 return true;
         }
 
         return false;
+    }
+
+    private void openFragmentFromDrawer(Fragment fragment){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_main_list, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_fragment_landscape, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     @Override
