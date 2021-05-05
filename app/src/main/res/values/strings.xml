@@ -24,5 +24,7 @@
     <string name="settings_button_label">Настройки</string>
     <string name="about_button_label">О приложении</string>
     <string name="some_user_name">Какой-то \"Пользователь\"</string>
+    <string name="done">Готово</string>
+    <string name="cancel">Отмена</string>
 
 </resources>
