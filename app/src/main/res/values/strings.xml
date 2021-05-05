@@ -4,4 +4,25 @@
     <string name="title_field_hint">Заголовок</string>
     <string name="note_field_hint">Заметка</string>
     <string name="data_field_hint">дата</string>
+    <string name="note_title_hint">Заголовок</string>
+    <string name="note_content_hint">Текст заметки</string>
+    <string name="date_button_text">Указать дату</string>
+    <string name="font_size_hint">Выберите размер текста</string>
+    <string name="settings_theme_hint">Выберите тему приложения:</string>
+    <string name="_authorization">Авторизоваться</string>
+    <string name="_enable_authorization">Включить синхронизацию</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="fragment_navigation">Fragment Navigation</string>
+    <string name="bar_img_hint">Изображение профиля</string>
+    <string name="_email_example">some_email@mail.com</string>
+    <string name="search">Поиск</string>
+    <string name="filter">Сортировка</string>
+    <string name="choose_all">Выбрать всё</string>
+    <string name="delete_selected">Удалить выбранные</string>
+    <string name="home_button_label">Домой</string>
+    <string name="settings_button_label">Настройки</string>
+    <string name="about_button_label">О приложении</string>
+    <string name="some_user_name">Какой-то \"Пользователь\"</string>
+
 </resources>
