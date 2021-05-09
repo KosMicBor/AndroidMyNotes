@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MyNotes</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_field_hint">Заголовок</string>
+    <string name="note_field_hint">Заметка</string>
+    <string name="data_field_hint">дата</string>
 </resources>
