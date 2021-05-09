@@ -6,24 +6,34 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 import gu_android_1089.mynotes.R;
 import gu_android_1089.mynotes.logic.Notes;
 import gu_android_1089.mynotes.logic.NotesRepo;
+import gu_android_1089.mynotes.logic.OnCreateBtnClick;
 import gu_android_1089.mynotes.logic.OnNoteClick;
 
 
-public class MainListFragment extends Fragment implements OnNoteClick {
+public class MainListFragment extends Fragment implements OnNoteClick, OnCreateBtnClick {
 
     private OnNoteClick onNoteClick;
+    private OnCreateBtnClick onCreateBtnClick;
+    private CoordinatorLayout coordinatorLayout;
 
     public MainListFragment() {
         // Required empty public constructor
@@ -36,11 +46,16 @@ public class MainListFragment extends Fragment implements OnNoteClick {
         if (context instanceof OnNoteClick) {
             onNoteClick = (OnNoteClick) context;
         }
+
+        if (context instanceof OnCreateBtnClick) {
+            onCreateBtnClick = (OnCreateBtnClick) context;
+        }
     }
 
     @Override
     public void onDetach() {
         onNoteClick = null;
+        onCreateBtnClick = null;
         super.onDetach();
     }
 
@@ -52,11 +67,24 @@ public class MainListFragment extends Fragment implements OnNoteClick {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.action_menu_main, menu);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         List<Notes> notes = new NotesRepo().getNotes();
         LinearLayoutCompat mainListLayout = view.findViewById(R.id.list_fragment);
+        coordinatorLayout = view.findViewById(R.id.coordinator_list);
 
         for (Notes note : notes) {
 
@@ -74,6 +102,13 @@ public class MainListFragment extends Fragment implements OnNoteClick {
             title.setText(note.getTitle());
 
             mainListLayout.addView(noteView);
+
+            coordinatorLayout.findViewById(R.id.fab).setOnClickListener(v -> {
+                //TODO: позже добавить инкопсюляцию как выше
+                onCreateBtnClick(new CreateNoteFragment());
+
+            });
+
         }
     }
 
@@ -81,6 +116,13 @@ public class MainListFragment extends Fragment implements OnNoteClick {
     public void onNoteClick(Notes note) {
         if (onNoteClick != null) {
             onNoteClick.onNoteClick(note);
+        }
+    }
+
+    @Override
+    public void onCreateBtnClick(Fragment fragment) {
+        if (onCreateBtnClick != null) {
+            onCreateBtnClick.onCreateBtnClick(fragment);
         }
     }
 }

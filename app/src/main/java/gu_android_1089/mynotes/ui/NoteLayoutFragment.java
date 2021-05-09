@@ -1,6 +1,7 @@
 package gu_android_1089.mynotes.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,14 +9,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import gu_android_1089.mynotes.R;
 import gu_android_1089.mynotes.logic.Notes;
+import gu_android_1089.mynotes.logic.NotesRepo;
 import gu_android_1089.mynotes.logic.OnNoteClick;
 
 public class NoteLayoutFragment extends Fragment implements OnNoteClick {
@@ -23,6 +25,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
     private static final String NOTE_KEY = "NOTE_KEY";
 
     private OnNoteClick onNoteClick;
+    private Notes restoredNote;
 
     public NoteLayoutFragment() {
         // Required empty public constructor
@@ -53,6 +56,21 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            menu.clear();
+            inflater.inflate(R.menu.action_menu_note, menu);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -67,7 +85,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
         TextView note = view.findViewById(R.id.note_input);
         TextView dateField = view.findViewById(R.id.note_date_text);
 
-        Notes restoredNote = getArguments().getParcelable(NOTE_KEY);
+        restoredNote = getArguments().getParcelable(NOTE_KEY);
 
         title.setText(restoredNote.getTitle());
         note.setText(restoredNote.getNote());
