@@ -1,28 +1,35 @@
 package gu_android_1089.mynotes.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import gu_android_1089.mynotes.R;
 import gu_android_1089.mynotes.logic.Notes;
-import gu_android_1089.mynotes.logic.OnNoteClick;
+import gu_android_1089.mynotes.logic.OnEditClickListener;
+import gu_android_1089.mynotes.logic.OnNoteClickListener;
 
-public class NoteLayoutFragment extends Fragment implements OnNoteClick {
+public class NoteLayoutFragment extends Fragment implements OnNoteClickListener, OnEditClickListener {
 
     private static final String NOTE_KEY = "NOTE_KEY";
 
-    private OnNoteClick onNoteClick;
+    private OnNoteClickListener onNoteClick;
+    private OnEditClickListener onEditClickListener;
+    private Notes restoredNote;
+
 
     public NoteLayoutFragment() {
         // Required empty public constructor
@@ -32,14 +39,16 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnNoteClick) {
-            onNoteClick = (OnNoteClick) context;
+        if (context instanceof OnNoteClickListener) {
+            onNoteClick = (OnNoteClickListener) context;
+            onEditClickListener = (OnEditClickListener) context;
         }
     }
 
     @Override
     public void onDetach() {
         onNoteClick = null;
+        onEditClickListener = null;
         super.onDetach();
     }
 
@@ -50,6 +59,35 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
         args.putParcelable(NOTE_KEY, note);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            menu.clear();
+            inflater.inflate(R.menu.action_menu_note, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_edit) {
+            onEditClickListener(restoredNote);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -67,18 +105,27 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClick {
         TextView note = view.findViewById(R.id.note_input);
         TextView dateField = view.findViewById(R.id.note_date_text);
 
-        Notes restoredNote = getArguments().getParcelable(NOTE_KEY);
+        restoredNote = getArguments().getParcelable(NOTE_KEY);
 
-        title.setText(restoredNote.getTitle());
-        note.setText(restoredNote.getNote());
-        dateField.setText(restoredNote.getDate().toString());
+        if (restoredNote != null) {
+            title.setText(restoredNote.getTitle());
+            note.setText(restoredNote.getNote());
+            dateField.setText(restoredNote.getDate().toString());
+        }
     }
 
     @Override
-    public void onNoteClick(Notes note) {
+    public void onNoteClickListener(Notes note) {
 
         if (onNoteClick != null) {
-            onNoteClick.onNoteClick(note);
+            onNoteClick.onNoteClickListener(note);
+        }
+    }
+
+    @Override
+    public void onEditClickListener(Notes note) {
+        if (onEditClickListener != null) {
+            onEditClickListener.onEditClickListener(note);
         }
     }
 }
