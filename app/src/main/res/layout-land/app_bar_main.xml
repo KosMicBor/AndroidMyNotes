@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_constraintBottom_toTopOf="@id/main_fragment_landscape"
+        app:layout_constraintBottom_toTopOf="@id/fragment_main_list"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -29,8 +29,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/main_fragment_landscape"
-        android:name="gu_android_1089.mynotes.ui.MainListFragment"
+        android:id="@+id/fragment_main_list"
         android:layout_width="@dimen/_0dp"
         android:layout_height="@dimen/_0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -44,7 +43,7 @@
         android:layout_height="@dimen/_0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/main_fragment_landscape"
+        app:layout_constraintStart_toEndOf="@id/fragment_main_list"
         app:layout_constraintTop_toBottomOf="@id/action_bar_land" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

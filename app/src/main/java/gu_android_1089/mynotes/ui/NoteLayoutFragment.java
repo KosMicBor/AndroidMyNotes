@@ -25,10 +25,12 @@ import gu_android_1089.mynotes.logic.OnNoteClickListener;
 public class NoteLayoutFragment extends Fragment implements OnNoteClickListener, OnEditClickListener {
 
     private static final String NOTE_KEY = "NOTE_KEY";
+    private static final String EDIT_NOTE_POSITION_KEY = "EDIT_NOTE_POSITION_KEY";
 
     private OnNoteClickListener onNoteClick;
     private OnEditClickListener onEditClickListener;
     private Notes restoredNote;
+    private int notePosition;
 
 
     public NoteLayoutFragment() {
@@ -53,10 +55,11 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
     }
 
 
-    public static NoteLayoutFragment newInstance(Notes note) {
+    public static NoteLayoutFragment newInstance(Notes note, int position) {
         NoteLayoutFragment fragment = new NoteLayoutFragment();
         Bundle args = new Bundle();
         args.putParcelable(NOTE_KEY, note);
+        args.putInt(EDIT_NOTE_POSITION_KEY, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,12 +81,11 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
         int id = item.getItemId();
 
         if (id == R.id.action_edit) {
-            onEditClickListener(restoredNote);
+            onEditClickListener(restoredNote, notePosition);
             return true;
         }
 
@@ -105,7 +107,9 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
         TextView note = view.findViewById(R.id.note_input);
         TextView dateField = view.findViewById(R.id.note_date_text);
 
+        assert getArguments() != null;
         restoredNote = getArguments().getParcelable(NOTE_KEY);
+        notePosition = getArguments().getInt(EDIT_NOTE_POSITION_KEY);
 
         if (restoredNote != null) {
             title.setText(restoredNote.getTitle());
@@ -115,17 +119,18 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
     }
 
     @Override
-    public void onNoteClickListener(Notes note) {
+    public void onNoteClickListener(Notes note, int position) {
 
         if (onNoteClick != null) {
-            onNoteClick.onNoteClickListener(note);
+            onNoteClick.onNoteClickListener(note, position);
+            notePosition = position;
         }
     }
 
     @Override
-    public void onEditClickListener(Notes note) {
+    public void onEditClickListener(Notes note, int position) {
         if (onEditClickListener != null) {
-            onEditClickListener.onEditClickListener(note);
+            onEditClickListener.onEditClickListener(note, position);
         }
     }
 }

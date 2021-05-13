@@ -13,11 +13,8 @@ import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.textfield.TextInputEditText;
 
 import gu_android_1089.mynotes.R;
 import gu_android_1089.mynotes.logic.Notes;
@@ -29,22 +26,29 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
 , OnEditClickListener {
 
     private static final String KEY = "KEY";
+    private static final String POSITION = "POSITION";
+
+
     private Notes noteForSave;
-    private FragmentManager fragmentManager = getSupportFragmentManager();
+    private final FragmentManager fragmentManager = getSupportFragmentManager();
+    private int noteClickedPosition;
+
+    public void setNoteForSave(Notes noteForSave) {
+        this.noteForSave = noteForSave;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = initToolbar();
         initDrawer(toolbar);
 
         if (savedInstanceState == null) {
 
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_main_list);
 
-                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_main_list);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 
                 if (fragment == null) {
                     fragmentManager.beginTransaction()
@@ -122,11 +126,6 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
                     .replace(R.id.fragment_main_list, fragment)
                     .addToBackStack(null)
                     .commit();
-        } else {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_landscape, fragment)
-                    .addToBackStack(null)
-                    .commit();
         }
     }
 
@@ -134,48 +133,49 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY, noteForSave);
+        outState.putInt(POSITION, noteClickedPosition);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.popBackStack();
         Notes note = savedInstanceState.getParcelable(KEY);
 
         if (note != null) {
             noteForSave = note;
+            noteClickedPosition = savedInstanceState.getInt(POSITION);
 
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_main_list, NoteLayoutFragment.newInstance(note))
+                        .replace(R.id.fragment_main_list, NoteLayoutFragment.newInstance(note, noteClickedPosition))
                         .addToBackStack(null)
                         .commit();
 
             } else {
                 fragmentManager.beginTransaction()
-                        .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(note))
+                        .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(note, noteClickedPosition))
                         .commit();
             }
         }
     }
 
     @Override
-    public void onNoteClickListener(Notes note) {
+    public void onNoteClickListener(Notes note, int position) {
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_main_list, NoteLayoutFragment.newInstance(note))
+                    .replace(R.id.fragment_main_list, NoteLayoutFragment.newInstance(note, position))
                     .addToBackStack(null)
                     .commit();
         } else {
             fragmentManager.beginTransaction()
-                    .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(note))
+                    .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(note, position))
                     .commit();
         }
-
+        noteClickedPosition = position;
         noteForSave = note;
     }
 
@@ -198,9 +198,9 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     }
 
     @Override
-    public void onEditClickListener(Notes note) {
+    public void onEditClickListener(Notes note, int position) {
         fragmentManager.beginTransaction()
-                .replace(R.id.created_note_layout, new NoteEditFragment())
+                .replace(R.id.fragment_main_list, NoteEditFragment.newInstance(note, position))
                 .addToBackStack(null)
                 .commit();
 

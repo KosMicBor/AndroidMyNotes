@@ -27,5 +27,6 @@
     <string name="done">Готово</string>
     <string name="cancel">Отмена</string>
     <string name="date_edit_button_text">Изменить дату</string>
+    <string name="clear">Удалить</string>
 
 </resources>

@@ -5,16 +5,27 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.Objects;
 
 import gu_android_1089.mynotes.R;
+import gu_android_1089.mynotes.logic.Notes;
 
 public class CreateNoteFragment extends Fragment {
+
+    TextInputEditText title;
+    TextInputEditText noteText;
+    private GeneralViewModel viewModel;
 
     public CreateNoteFragment() {
     }
@@ -35,9 +46,37 @@ public class CreateNoteFragment extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_create_done) {
+            Notes newNote = new Notes(13D, Objects.requireNonNull(title.getText()).toString().trim(),
+                    Objects.requireNonNull(noteText.getText()).toString().trim(), "Личные");
+            viewModel.addNewNoteLiveData(newNote);
+            requireActivity().onBackPressed();
+        }
+
+        if (id == R.id.action_create_abort) {
+            requireActivity().onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_create_note, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(requireActivity()).get(GeneralViewModel.class);
+        title = view.findViewById(R.id.create_title_input);
+        noteText = view.findViewById(R.id.create_content_input);
     }
 }
