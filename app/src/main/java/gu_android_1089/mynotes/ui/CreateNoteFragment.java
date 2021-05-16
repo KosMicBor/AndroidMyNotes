@@ -19,7 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 import gu_android_1089.mynotes.R;
-import gu_android_1089.mynotes.logic.Notes;
+import gu_android_1089.mynotes.logic.Note;
 
 public class CreateNoteFragment extends Fragment {
 
@@ -51,9 +51,8 @@ public class CreateNoteFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_create_done) {
-            Notes newNote = new Notes(13D, Objects.requireNonNull(title.getText()).toString().trim(),
-                    Objects.requireNonNull(noteText.getText()).toString().trim(), "Личные");
-            viewModel.addNewNoteLiveData(newNote);
+            viewModel.addNewNoteLiveData(Objects.requireNonNull(title.getText()).toString(),
+                    Objects.requireNonNull(noteText.getText()).toString());
             requireActivity().onBackPressed();
         }
 

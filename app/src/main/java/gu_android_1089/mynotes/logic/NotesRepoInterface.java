@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface NotesRepoInterface {
 
-    List<Notes> getNotes();
+    void getNotes(CallbackInterface<List<Note>> callback);
 
-    void addNote(Notes newNote);
+    void addNote(String title, String noteText, CallbackInterface<Note> newNote);
 
-    void editNote(int position, Notes note);
+    void editNote(Note note, CallbackInterface<Note> editNoteCallback);
 
-    void deleteNoteFromList(int position);
+    void deleteNote(Note note, CallbackInterface<Note> removeNoteCallback);
 }
