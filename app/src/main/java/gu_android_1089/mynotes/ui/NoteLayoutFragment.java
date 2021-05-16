@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import gu_android_1089.mynotes.R;
-import gu_android_1089.mynotes.logic.Notes;
+import gu_android_1089.mynotes.logic.Note;
 import gu_android_1089.mynotes.logic.OnEditClickListener;
 import gu_android_1089.mynotes.logic.OnNoteClickListener;
 
@@ -29,7 +28,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
 
     private OnNoteClickListener onNoteClick;
     private OnEditClickListener onEditClickListener;
-    private Notes restoredNote;
+    private Note restoredNote;
     private int notePosition;
 
 
@@ -55,7 +54,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
     }
 
 
-    public static NoteLayoutFragment newInstance(Notes note, int position) {
+    public static NoteLayoutFragment newInstance(Note note, int position) {
         NoteLayoutFragment fragment = new NoteLayoutFragment();
         Bundle args = new Bundle();
         args.putParcelable(NOTE_KEY, note);
@@ -119,7 +118,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
     }
 
     @Override
-    public void onNoteClickListener(Notes note, int position) {
+    public void onNoteClickListener(Note note, int position) {
 
         if (onNoteClick != null) {
             onNoteClick.onNoteClickListener(note, position);
@@ -128,7 +127,7 @@ public class NoteLayoutFragment extends Fragment implements OnNoteClickListener,
     }
 
     @Override
-    public void onEditClickListener(Notes note, int position) {
+    public void onEditClickListener(Note note, int position) {
         if (onEditClickListener != null) {
             onEditClickListener.onEditClickListener(note, position);
         }

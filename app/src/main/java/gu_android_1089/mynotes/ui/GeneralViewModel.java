@@ -7,60 +7,97 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import gu_android_1089.mynotes.logic.Notes;
-import gu_android_1089.mynotes.logic.NotesRepo;
+import gu_android_1089.mynotes.logic.CallbackInterface;
+import gu_android_1089.mynotes.logic.FirestoreNotesRepo;
+import gu_android_1089.mynotes.logic.Note;
 import gu_android_1089.mynotes.logic.NotesRepoInterface;
 
 public class GeneralViewModel extends ViewModel {
 
-    private final MutableLiveData<List<Notes>> notesLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Note>> notesLiveData = new MutableLiveData<>();
 
-    private final MutableLiveData<Notes> newNoteLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Integer> noteDeleteLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Notes> noteEditLiveData = new MutableLiveData<>();
+    private final NotesRepoInterface repository = new FirestoreNotesRepo();
 
-    private NotesRepo repository;
-
-    public List<Notes> getNotes() {
-        return notes;
-    }
-
-    private List<Notes> notes;
-
-    public LiveData<List<Notes>> getNotesLiveData() {
+    public LiveData<List<Note>> getNotesLiveData() {
         return notesLiveData;
     }
 
     public void requestNotes() {
-        repository = new NotesRepo();
-        notes = repository.getNotes();
-        notesLiveData.setValue(notes);
+        repository.getNotes(new CallbackInterface<List<Note>>() {
+            @Override
+            public void onSuccess(List<Note> value) {
+                notesLiveData.setValue(value);
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
     }
 
-    public LiveData<Notes> getNewNoteLiveData() {
-        return newNoteLiveData;
+    public void addNewNoteLiveData(String title, String noteText) {
+        repository.addNote(title, noteText, new CallbackInterface<Note>() {
+            @Override
+            public void onSuccess(Note value) {
+                if (notesLiveData.getValue() != null){
+                    ArrayList<Note> notes = new ArrayList<>(notesLiveData.getValue());
+
+                    notes.add(value);
+
+                    notesLiveData.setValue(notes);
+                } else {
+
+                    ArrayList<Note> newEmptyNotes = new ArrayList<>();
+                    newEmptyNotes.add(value);
+                    notesLiveData.setValue(newEmptyNotes);
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
     }
 
-    public void addNewNoteLiveData(Notes newNote) {
-        repository.addNote(newNote);
-        newNoteLiveData.setValue(newNote);
+    public void editNoteLiveData(Note editedNote, int position) {
+        repository.editNote(editedNote, new CallbackInterface<Note>() {
+            @Override
+            public void onSuccess(Note value) {
+                if (notesLiveData.getValue() != null){
+                    ArrayList<Note> notes = new ArrayList<>(notesLiveData.getValue());
+                    notes.set(position, editedNote);
+                    notesLiveData.setValue(notes);
+                }
+            }
+
+            @Override
+            public void onError(Throwable error) {
+
+            }
+        });
+//        repository.editNote(position, editedNote);
+//        newNoteLiveData.setValue(editedNote);
     }
 
-    public void editNoteLiveData(Notes editedNote, int position) {
-        repository.editNote(position, editedNote);
-        newNoteLiveData.setValue(editedNote);
-    }
+    public void deleteNoteClicked(Note note) {
+        repository.deleteNote(note, new CallbackInterface<Note>() {
+            @Override
+            public void onSuccess(Note value) {
 
-    public void deleteNoteClicked(int position) {
-        repository.deleteNoteFromList(position);
-        noteDeleteLiveData.setValue(position);
-    }
+                if (notesLiveData.getValue() != null){
+                    ArrayList<Note> notes = new ArrayList<>(notesLiveData.getValue());
+                    notes.remove(value);
+                    notesLiveData.setValue(notes);
+                }
+            }
 
-    public LiveData<Integer> getNoteDeleteLiveData() {
-        return noteDeleteLiveData;
-    }
+            @Override
+            public void onError(Throwable error) {
 
-    public MutableLiveData<Notes> getNoteEditLiveData() {
-        return noteEditLiveData;
+            }
+        });
     }
 }

@@ -1,11 +1,29 @@
 package gu_android_1089.mynotes.logic;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotesRepo implements NotesRepoInterface {
+    @Override
+    public void getNotes(CallbackInterface<List<Note>> callback) {
 
-    private ArrayList<Notes> notes = new ArrayList<>();
+    }
+
+    @Override
+    public void addNote(String title, String noteText, CallbackInterface<Note> newNote) {
+
+    }
+
+    @Override
+    public void editNote(Note note, CallbackInterface<Note> editNoteCallback) {
+
+    }
+
+    @Override
+    public void deleteNote(Note note, CallbackInterface<Note> removeNoteCallback) {
+
+    }
+
+    /*private ArrayList<Notes> notes = new ArrayList<>();
 
     @Override
     public List<Notes> getNotes() {
@@ -36,9 +54,9 @@ public class NotesRepo implements NotesRepoInterface {
     }
 
     @Override
-    public void deleteNoteFromList(int position) {
+    public void deleteNote(int position) {
         notes.remove(position);
-    }
+    }*/
 
 
 }

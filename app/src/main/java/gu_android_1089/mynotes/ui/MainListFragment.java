@@ -99,18 +99,6 @@ public class MainListFragment extends Fragment implements OnCreateBtnClickListen
             mainListAdapter.setNotes(notes);
         });
 
-        viewModel.getNewNoteLiveData().observe(getViewLifecycleOwner(), note -> {
-            mainListAdapter.addNewNoteRefreshList(viewModel.getNotes());
-        });
-
-        viewModel.getNoteDeleteLiveData().observe(getViewLifecycleOwner(), position -> {
-            mainListAdapter.removeNote(position);
-        });
-
-        viewModel.getNoteEditLiveData().observe(getViewLifecycleOwner(), position -> {
-            mainListAdapter.editNewNote(viewModel.getNotes());
-        });
-
         coordinatorLayout.findViewById(R.id.fab).setOnClickListener(v -> {
             onCreateBtnClickListener(new CreateNoteFragment());
         });
@@ -136,9 +124,11 @@ public class MainListFragment extends Fragment implements OnCreateBtnClickListen
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         int position = mainListAdapter.getSelectedItemPosition();
+
         if (item.getItemId() == R.id.context_menu_action_delete) {
-            viewModel.deleteNoteClicked(position);
+            viewModel.deleteNoteClicked(mainListAdapter.getNote(position));
             ((MainActivity) requireActivity()).setNoteForSave(null);
+
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 requireActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(null, 0))

@@ -10,30 +10,35 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
 import gu_android_1089.mynotes.R;
-import gu_android_1089.mynotes.logic.Notes;
+import gu_android_1089.mynotes.logic.Note;
 import gu_android_1089.mynotes.logic.OnCreateBtnClickListener;
 import gu_android_1089.mynotes.logic.OnEditClickListener;
 import gu_android_1089.mynotes.logic.OnNoteClickListener;
+import gu_android_1089.mynotes.logic.SignInClickListener;
 
 public class MainActivity extends AppCompatActivity implements OnNoteClickListener, OnCreateBtnClickListener
-, OnEditClickListener {
+        , OnEditClickListener, SignInClickListener {
 
     private static final String KEY = "KEY";
     private static final String POSITION = "POSITION";
 
-
-    private Notes noteForSave;
+    private Toolbar toolbar;
+    private Note noteForSave;
     private final FragmentManager fragmentManager = getSupportFragmentManager();
     private int noteClickedPosition;
 
-    public void setNoteForSave(Notes noteForSave) {
+    public void setNoteForSave(Note noteForSave) {
         this.noteForSave = noteForSave;
     }
 
@@ -41,20 +46,18 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = initToolbar();
+        toolbar = initToolbar();
         initDrawer(toolbar);
 
         if (savedInstanceState == null) {
 
             Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_main_list);
-
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-
-                if (fragment == null) {
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.fragment_main_list, new MainListFragment())
-                            .commit();
-                }
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            if (fragment == null) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_main_list, new SignInFragment())
+                        .commit();
+                toolbar.setVisibility(View.GONE);
             }
         }
     }
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
 
     private void initDrawer(Toolbar toolbar) {
         final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar,
                 R.string.navigation_drawer_open,
@@ -140,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         fragmentManager.popBackStack();
-        Notes note = savedInstanceState.getParcelable(KEY);
+        Note note = savedInstanceState.getParcelable(KEY);
 
         if (note != null) {
             noteForSave = note;
@@ -162,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     }
 
     @Override
-    public void onNoteClickListener(Notes note, int position) {
+    public void onNoteClickListener(Note note, int position) {
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 
@@ -198,11 +202,24 @@ public class MainActivity extends AppCompatActivity implements OnNoteClickListen
     }
 
     @Override
-    public void onEditClickListener(Notes note, int position) {
+    public void onEditClickListener(Note note, int position) {
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_main_list, NoteEditFragment.newInstance(note, position))
                 .addToBackStack(null)
                 .commit();
 
+    }
+
+    @Override
+    public void signInClickListener(Fragment fragment, String name, String email) {
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_main_list, fragment)
+                .commit();
+        toolbar.setVisibility(View.VISIBLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        TextView userName = findViewById(R.id.drawer_user_name);
+        TextView userEmail = findViewById(R.id.drawer_user_email);
+        userName.setText(name);
+        userEmail.setText(email);
     }
 }

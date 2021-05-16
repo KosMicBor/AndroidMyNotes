@@ -1,14 +1,14 @@
 package gu_android_1089.mynotes.logic;
 
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Date;
+import java.util.Objects;
 
-public class Notes implements Parcelable {
-    private final  double id;
+public class Note implements Parcelable {
+    private final String id;
     private String title;
     private String note;
     private Date date;
@@ -16,32 +16,32 @@ public class Notes implements Parcelable {
     private Color color;
 
 
-
-    public Notes(Double id, String title, String note, String category) {
+    public Note(String id, String title, String note, String category, Date date) {
         this.id = id;
         this.title = title;
         this.note = note;
         this.category = category;
-        this.date = new Date();
+        this.date = date;
 
     }
 
-    protected Notes(Parcel in) {
-        id = in.readDouble();
+    protected Note(Parcel in) {
+        id = in.readString();
         title = in.readString();
         note = in.readString();
         category = in.readString();
+        date = (Date) in.readSerializable();
     }
 
-    public static final Creator<Notes> CREATOR = new Creator<Notes>() {
+    public static final Creator<Note> CREATOR = new Creator<Note>() {
         @Override
-        public Notes createFromParcel(Parcel in) {
-            return new Notes(in);
+        public Note createFromParcel(Parcel in) {
+            return new Note(in);
         }
 
         @Override
-        public Notes[] newArray(int size) {
-            return new Notes[size];
+        public Note[] newArray(int size) {
+            return new Note[size];
         }
     };
 
@@ -62,9 +62,10 @@ public class Notes implements Parcelable {
     }
 
 
-    public double getId() {
+    public String getId() {
         return id;
     }
+
     public String getTitle() {
         return title;
     }
@@ -88,9 +89,28 @@ public class Notes implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(id);
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(note);
         dest.writeString(category);
+        dest.writeSerializable(date);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note1 = (Note) o;
+        return Objects.equals(id, note1.id) &&
+                Objects.equals(title, note1.title) &&
+                Objects.equals(note, note1.note) &&
+                Objects.equals(date, note1.date) &&
+                Objects.equals(category, note1.category) &&
+                Objects.equals(color, note1.color);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, note, date, category, color);
     }
 }

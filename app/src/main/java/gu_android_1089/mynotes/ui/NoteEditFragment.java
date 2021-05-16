@@ -2,6 +2,7 @@ package gu_android_1089.mynotes.ui;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,14 +21,14 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 import gu_android_1089.mynotes.R;
-import gu_android_1089.mynotes.logic.Notes;
+import gu_android_1089.mynotes.logic.Note;
 import gu_android_1089.mynotes.logic.OnEditClickListener;
 
 public class NoteEditFragment extends Fragment implements OnEditClickListener {
 
     private static final String EDIT_NOTE_KEY = "EDIT_NOTE_KEY";
     private static final String EDIT_NOTE_POSITION_KEY = "EDIT_NOTE_POSITION_KEY";
-    private Notes editedNote;
+    private Note editedNote;
     TextInputEditText title;
     TextInputEditText noteText;
     private GeneralViewModel viewModel;
@@ -53,7 +54,7 @@ public class NoteEditFragment extends Fragment implements OnEditClickListener {
     }
 
 
-    public static NoteEditFragment newInstance(Notes note, int position) {
+    public static NoteEditFragment newInstance(Note note, int position) {
         NoteEditFragment fragment = new NoteEditFragment();
         Bundle args = new Bundle();
         args.putParcelable(EDIT_NOTE_KEY, note);
@@ -91,8 +92,12 @@ public class NoteEditFragment extends Fragment implements OnEditClickListener {
         int id = item.getItemId();
 
         if (id == R.id.action_edit_done) {
-            editedNote = new Notes(13D, Objects.requireNonNull(title.getText()).toString().trim(),
-                    Objects.requireNonNull(noteText.getText()).toString().trim(), "Личные");
+            assert getArguments() != null;
+            String titleNew = title.getText().toString();
+            String noteTextNew = noteText.getText().toString();
+
+            Note oldNote = getArguments().getParcelable(EDIT_NOTE_KEY);
+            editedNote = new Note (oldNote.getId(), titleNew, noteTextNew, oldNote.getCategory(), oldNote.getDate());
             viewModel.editNoteLiveData(editedNote, editNotePosition);
             fm.popBackStack();
             fm.beginTransaction()
@@ -110,7 +115,7 @@ public class NoteEditFragment extends Fragment implements OnEditClickListener {
 
 
     @Override
-    public void onEditClickListener(Notes note, int position) {
+    public void onEditClickListener(Note note, int position) {
         editedNote = note;
         editNotePosition = position;
     }

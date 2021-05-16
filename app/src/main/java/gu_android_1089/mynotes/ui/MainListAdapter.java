@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gu_android_1089.mynotes.R;
-import gu_android_1089.mynotes.logic.Notes;
-import gu_android_1089.mynotes.logic.NotesRepo;
+import gu_android_1089.mynotes.logic.Note;
 import gu_android_1089.mynotes.logic.OnNoteClickListener;
 
 public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHolder>
@@ -24,29 +23,30 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
 
 
 
-    private ArrayList<Notes> notes = new ArrayList<>();
+    private ArrayList<Note> notes = new ArrayList<>();
     private OnNoteClickListener onNoteClickListener;
     private final Fragment fragment;
     private int selectedItemPosition;
 
-    public void setNotes(List<Notes> notesList) {
+    public void setNotes(List<Note> noteList) {
         notes.clear();
-        notes.addAll(notesList);
+        notes.addAll(noteList);
         notifyDataSetChanged();
     }
 
-    public void addNewNoteRefreshList(List<Notes> newNotes){
+    public void addNewNoteRefreshList(List<Note> newNotes){
         notes.clear();
-        notes = (ArrayList<Notes>) newNotes;
+        notes = (ArrayList<Note>) newNotes;
     }
 
-    public void editNewNote(List<Notes> newNotes){
+    public void editNewNote(List<Note> newNotes){
         notes.clear();
-        notes = (ArrayList<Notes>) newNotes;
+        notes = (ArrayList<Note>) newNotes;
         notifyDataSetChanged();
     }
 
     public void removeNote(int position){
+        notes.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -90,7 +90,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
             }
         }
 
-        public void bind(Notes note) {
+        public void bind(Note note) {
             title.setText(note.getTitle());
         }
     }
@@ -101,7 +101,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         super.onBindViewHolder(holder, position, payloads);
         holder.itemView.setOnClickListener(v -> {
             onNoteClickListener = (OnNoteClickListener) holder.itemView.getContext();
-            //selectedItemPosition = holder.getLayoutPosition();
             onNoteClickListener(notes.get(position), position);
 
         });
@@ -114,7 +113,11 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
     }
 
     @Override
-    public void onNoteClickListener(Notes note, int position) {
+    public void onNoteClickListener(Note note, int position) {
         onNoteClickListener.onNoteClickListener(note, position);
+    }
+
+    Note getNote (int position){
+        return notes.get(position);
     }
 }
