@@ -1,16 +1,15 @@
 package gu_android_1089.mynotes.logic;
 
-import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotesRepo {
+public class NotesRepo implements NotesRepoInterface {
 
+    private ArrayList<Notes> notes = new ArrayList<>();
+
+    @Override
     public List<Notes> getNotes() {
-        ArrayList<Notes> notes = new ArrayList<>();
-        //на данном этапе есть предустановленные заметки для демонстрации, в будущем будет
-        //реализован функционал добавления новых заметок через параметры метода
+
         notes.add(new Notes(1d, "Покупки", "Купить молоко", "Стандартные"));
         notes.add(new Notes(2d, "TODO", "Выкомпать червяка", "Стандартные"));
         notes.add(new Notes(3d, "TODO", "Накормить червяком соседа", "Стандартные"));
@@ -25,4 +24,21 @@ public class NotesRepo {
         notes.add(new Notes(12d, "А тут тем более", "Для продолжения, нажмите себе на наос", "Личные"));
         return notes;
     }
+
+    @Override
+    public void addNote (Notes note){
+        notes.add(note);
+    }
+
+    @Override
+    public void editNote (int position, Notes note){
+        notes.set(position, note);
+    }
+
+    @Override
+    public void deleteNoteFromList(int position) {
+        notes.remove(position);
+    }
+
+
 }
