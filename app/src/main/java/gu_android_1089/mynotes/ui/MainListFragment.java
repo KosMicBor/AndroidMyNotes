@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import gu_android_1089.mynotes.R;
+import gu_android_1089.mynotes.logic.AlertDialogClickListener;
 import gu_android_1089.mynotes.logic.OnCreateBtnClickListener;
 
 public class MainListFragment extends Fragment implements OnCreateBtnClickListener {
@@ -32,6 +33,7 @@ public class MainListFragment extends Fragment implements OnCreateBtnClickListen
     private OnCreateBtnClickListener onCreateBtnClickListener;
     private MainListAdapter mainListAdapter;
     private GeneralViewModel viewModel;
+    private int position;
 
     public MainListFragment() {
         // Required empty public constructor
@@ -123,17 +125,13 @@ public class MainListFragment extends Fragment implements OnCreateBtnClickListen
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        int position = mainListAdapter.getSelectedItemPosition();
+        position =  mainListAdapter.getSelectedItemPosition();
 
         if (item.getItemId() == R.id.context_menu_action_delete) {
-            viewModel.deleteNoteClicked(mainListAdapter.getNote(position));
-            ((MainActivity) requireActivity()).setNoteForSave(null);
+            AlertDialogRemoveFragment removeDialogFragment = AlertDialogRemoveFragment.newInstance();
+            removeDialogFragment.setAlertDialogClickListener(alertDialogListener);
+            removeDialogFragment.show(requireActivity().getSupportFragmentManager(), "dialog_fragment");
 
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(null, 0))
-                .commit();
-            }
             return true;
         }
         return super.onContextItemSelected(item);
@@ -145,4 +143,20 @@ public class MainListFragment extends Fragment implements OnCreateBtnClickListen
             onCreateBtnClickListener.onCreateBtnClickListener(fragment);
         }
     }
+
+    private AlertDialogClickListener alertDialogListener = new AlertDialogClickListener() {
+
+        @Override
+        public void onDialogYes() {
+            viewModel.deleteNoteClicked(mainListAdapter.getNote(position));
+            ((MainActivity) requireActivity()).setNoteForSave(null);
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.note_layout_fragment, NoteLayoutFragment.newInstance(null, 0))
+                        .commit();
+            }
+        }
+    };
 }
+
