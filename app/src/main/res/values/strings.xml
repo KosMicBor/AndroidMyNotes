@@ -29,5 +29,8 @@
     <string name="date_edit_button_text">Изменить дату</string>
     <string name="clear">Удалить</string>
     <string name="app_info">This is the app just for my own coding training.</string>
+    <string name="alert_delete_message">Вы точно хотите удалить эту заметку?</string>
+    <string name="alert_remove_yes">да</string>
+    <string name="alert_remove_abort">отмена</string>
 
 </resources>

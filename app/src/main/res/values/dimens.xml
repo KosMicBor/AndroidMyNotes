@@ -10,4 +10,5 @@
     <dimen name="_8dp">8dp</dimen>
     <dimen name="_bar_icon_size">86dp</dimen>
     <dimen name="_28sp">28sp</dimen>
+    <dimen name="_24sp">24sp</dimen>
 </resources>
